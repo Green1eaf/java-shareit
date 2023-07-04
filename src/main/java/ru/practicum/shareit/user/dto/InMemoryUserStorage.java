@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class UserInMemoryStorage implements UserStorage {
+public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> storage = new HashMap<>();
     private long counter = 0;
