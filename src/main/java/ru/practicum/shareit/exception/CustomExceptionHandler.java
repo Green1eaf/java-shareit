@@ -30,10 +30,10 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseError handle(RuntimeException exception) {
         log.error(exception.getMessage());
-        return new ResponseError(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 
