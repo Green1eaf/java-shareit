@@ -15,11 +15,12 @@ public class InMemoryItemStorage implements ItemStorage {
     private long counter = 0;
 
     @Override
-    public void create(Item item) {
+    public Item create(Item item) {
         if (item.getId() == null) {
             item.setId(++counter);
         }
         storage.put(item.getId(), item);
+        return item;
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ItemStorage {
 
-    void create(Item item);
+    Item create(Item item);
 
     Item findById(long itemId);
 

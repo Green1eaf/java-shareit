@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
+import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.user.dto.UserStorage;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public class UserService {
     }
 
     public User findById(long id) {
-        return storage.findById(id);
+        return Optional.ofNullable(storage.findById(id))
+                .orElseThrow(() -> new NotExistException("User with id=" + id + " not exists"));
     }
 
     public User update(User user, long userId) {

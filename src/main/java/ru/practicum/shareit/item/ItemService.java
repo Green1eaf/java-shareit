@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.exception.UserOwnershipException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
@@ -22,19 +21,19 @@ public class ItemService {
         this.userService = userService;
     }
 
-    public void create(ItemDto itemDto, long userId) {
-        var item = ItemMapper.toItem(itemDto, userService.findById(userId));
-        itemStorage.create(item);
+    public Item create(Item item, long userId) {
+        userService.findById(userId);
+        return itemStorage.create(item);
     }
 
-    public void update(ItemDto itemDto, long itemId, long userId) {
-        var item = itemStorage.findById(itemId);
+    public void update(Item item, long itemId, long userId) {
+        //TODO переписать метод полностью
         if (item.getOwner().getId() != userId) {
             throw new UserOwnershipException("User with id=" + userId +
                     " is not the owner of the item with id=" + itemId);
         }
-        itemDto.setId(itemId);
-        itemStorage.update(ItemMapper.toItem(itemDto, userService.findById(userId)));
+        item.setId(itemId);
+        itemStorage.update(item);
     }
 
     public Item findById(long itemId) {

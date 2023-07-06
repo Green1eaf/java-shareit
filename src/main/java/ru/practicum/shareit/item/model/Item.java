@@ -23,12 +23,12 @@ public class Item {
     private String name;
 
     @NotBlank
+    @NotNull
     private String description;
 
     @NotNull
     private Boolean available;
 
-    @NotNull
     private User owner;
 
     private ItemRequest request;
