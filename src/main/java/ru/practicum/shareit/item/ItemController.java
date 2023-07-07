@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -23,9 +24,9 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public void update(@RequestBody Item item, @PathVariable long itemId,
-                       @RequestHeader("X-Sharer-User-Id") long userId) {
-        itemService.update(item, itemId, userId);
+    public ItemDto update(@RequestBody Item item, @PathVariable long itemId,
+                          @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.update(item, itemId, userId);
     }
 
     @GetMapping("/{itemId}")

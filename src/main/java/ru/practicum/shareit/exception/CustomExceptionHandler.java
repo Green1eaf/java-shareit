@@ -30,6 +30,13 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseError notUserOwnership(UserOwnershipException exception) {
+        log.error(exception.getMessage());
+        return new ResponseError(exception.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseError handle(RuntimeException exception) {
         log.error(exception.getMessage());
