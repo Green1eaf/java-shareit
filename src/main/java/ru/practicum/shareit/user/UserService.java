@@ -30,16 +30,12 @@ public class UserService {
     }
 
     public User update(User user, long userId) {
-
         var updatedUser = findById(userId);
         if (user.getName() != null) {
             updatedUser.setName(user.getName());
         }
         if (user.getEmail() != null) {
-            var otherUser = findByEmail(user.getEmail()).orElse(null);
-            if (otherUser != null && otherUser.getEmail().equals(user.getEmail()) && otherUser.getId() != userId) {
-                throw new AlreadyExistsException("User with email=" + user.getEmail() + " already exists");
-            }
+            checkForDuplicateEmail(user.getEmail(), userId);
             updatedUser.setEmail(user.getEmail());
         }
         return storage.update(updatedUser);
@@ -57,5 +53,12 @@ public class UserService {
         return findAll().stream()
                 .filter(user -> email.equals(user.getEmail()))
                 .findFirst();
+    }
+
+    private void checkForDuplicateEmail(String email, long userId) {
+        var otherUser = findByEmail(email).orElse(null);
+        if (otherUser != null && otherUser.getEmail().equals(email) && otherUser.getId() != userId) {
+            throw new AlreadyExistsException("User with email=" + email + " already exists");
+        }
     }
 }
