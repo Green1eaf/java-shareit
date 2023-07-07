@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -35,8 +34,8 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<Item> findAll() {
-        return itemService.findAll();
+    public List<Item> findAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.findAllByUserId(userId);
     }
 
     @GetMapping("/search")

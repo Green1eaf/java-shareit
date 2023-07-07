@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.exception.UserOwnershipException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.item.dto.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,8 @@ public class ItemService {
     }
 
     public Item create(Item item, long userId) {
-        userService.findById(userId);
+        var owner = userService.findById(userId);
+        item.setOwner(owner);
         return itemStorage.create(item);
     }
 
@@ -57,14 +60,18 @@ public class ItemService {
         return item;
     }
 
-    public List<Item> findAll() {
-        return itemStorage.findAll();
+    public List<Item> findAllByUserId(long userId) {
+        return itemStorage.findAll().stream()
+                .filter(item -> item.getOwner() != null && item.getOwner().getId() == userId)
+                .collect(Collectors.toList());
     }
 
     public List<Item> searchByText(String text) {
-        return findAll().stream()
-                .filter(item -> item.getName().contains(text) || item.getDescription().contains(text))
-                .filter(Item::getAvailable)
-                .collect(Collectors.toList());
+        return text.isEmpty() ? Collections.emptyList() :
+                itemStorage.findAll().stream()
+                        .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                item.getDescription().toLowerCase().contains(text.toLowerCase()))
+                        .filter(Item::getAvailable)
+                        .collect(Collectors.toList());
     }
 }
