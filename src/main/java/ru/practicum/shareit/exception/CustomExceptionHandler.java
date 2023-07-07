@@ -43,7 +43,6 @@ public class CustomExceptionHandler {
         return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-
     @Getter
     @RequiredArgsConstructor
     private static class ResponseError {

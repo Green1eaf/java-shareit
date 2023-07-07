@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.exception.UserOwnershipException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -11,6 +10,7 @@ import ru.practicum.shareit.user.UserService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,14 +24,14 @@ public class ItemService {
         this.userService = userService;
     }
 
-    public Item create(Item item, long userId) {
+    public ItemDto create(Item item, long userId) {
         var owner = userService.findById(userId);
         item.setOwner(owner);
-        return itemStorage.create(item);
+        return ItemMapper.toItemDto(itemStorage.create(item));
     }
 
     public ItemDto update(Item item, long itemId, long userId) {
-        var updatedItem = findById(itemId);
+        var updatedItem = checkIfExists(itemStorage.findById(itemId));
         var owner = userService.findById(userId);
         if (updatedItem.getOwner() != null && updatedItem.getOwner().getId() != userId) {
             throw new UserOwnershipException("User with id=" + userId +
@@ -52,26 +52,33 @@ public class ItemService {
         return ItemMapper.toItemDto(updatedItem);
     }
 
-    public Item findById(long itemId) {
-        var item = itemStorage.findById(itemId);
-        if (item == null) {
-            throw new NotExistException("Item with id=" + itemId + " not exists");
-        }
-        return item;
+    public ItemDto findById(long itemId) {
+        var item = checkIfExists(itemStorage.findById(itemId));
+        return ItemMapper.toItemDto(item);
     }
 
-    public List<Item> findAllByUserId(long userId) {
+    public List<ItemDto> findAllByUserId(long userId) {
+        return findAllItemDtoByFilter(item -> item.getOwner() != null && item.getOwner().getId() == userId);
+    }
+
+    public List<ItemDto> searchByText(String text) {
+        return text.isEmpty() ? Collections.emptyList() :
+                findAllItemDtoByFilter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(text.toLowerCase())
+                        && item.getAvailable());
+    }
+
+    private List<ItemDto> findAllItemDtoByFilter(Predicate<Item> filter) {
         return itemStorage.findAll().stream()
-                .filter(item -> item.getOwner() != null && item.getOwner().getId() == userId)
+                .filter(filter)
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
-    public List<Item> searchByText(String text) {
-        return text.isEmpty() ? Collections.emptyList() :
-                itemStorage.findAll().stream()
-                        .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                        .filter(Item::getAvailable)
-                        .collect(Collectors.toList());
+    private <T> T checkIfExists(T obj) {
+        if (obj == null) {
+            throw new NotExistException("Item not exists");
+        }
+        return obj;
     }
 }

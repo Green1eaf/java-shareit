@@ -18,7 +18,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public Item create(@RequestBody @Valid Item item, @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ItemDto create(@RequestBody @Valid Item item, @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.create(item, userId);
     }
 
@@ -29,17 +29,17 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public Item findById(@PathVariable long itemId) {
+    public ItemDto findById(@PathVariable long itemId) {
         return itemService.findById(itemId);
     }
 
     @GetMapping
-    public List<Item> findAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> findAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.findAllByUserId(userId);
     }
 
     @GetMapping("/search")
-    public List<Item> findByText(@RequestParam(required = false, name = "text") String text) {
+    public List<ItemDto> findByText(@RequestParam(required = false, name = "text") String text) {
         return itemService.searchByText(text);
     }
 }
