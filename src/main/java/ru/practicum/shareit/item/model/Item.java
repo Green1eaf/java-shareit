@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class Item {
-
     private Long id;
 
     @NotNull

@@ -12,7 +12,6 @@ import ru.practicum.shareit.request.ItemRequest;
 @AllArgsConstructor
 @Builder
 public class ItemDto {
-
     private Long id;
 
     private String name;
