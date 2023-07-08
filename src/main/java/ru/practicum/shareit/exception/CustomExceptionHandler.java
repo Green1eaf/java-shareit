@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseError conflictHandle(AlreadyExistsException exception) {
@@ -38,9 +40,16 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError handle(RuntimeException exception) {
+    public ResponseError badRequestHandle(Exception exception) {
         log.error(exception.getMessage());
         return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseError internalServerErrorHandle(Throwable exception) {
+        log.error(exception.getMessage());
+        return new ResponseError(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Getter
@@ -48,7 +57,7 @@ public class CustomExceptionHandler {
     private static class ResponseError {
         private final String message;
         private final HttpStatus status;
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
         private final LocalDateTime time = LocalDateTime.now();
     }
 }
