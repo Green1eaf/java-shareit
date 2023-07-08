@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.exception.UserOwnershipException;
@@ -13,48 +14,43 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.item.ItemMapper.*;
+
 @Service
+@RequiredArgsConstructor
 public class ItemService {
 
     private final ItemStorage itemStorage;
     private final UserService userService;
 
-    public ItemService(ItemStorage itemStorage, UserService userService) {
-        this.itemStorage = itemStorage;
-        this.userService = userService;
+    public ItemDto create(ItemDto itemDto, long userId) {
+        return toItemDto(itemStorage.create(toItem(itemDto, userService.findById(userId))));
     }
 
-    public ItemDto create(Item item, long userId) {
-        var owner = userService.findById(userId);
-        item.setOwner(owner);
-        return ItemMapper.toItemDto(itemStorage.create(item));
-    }
-
-    public ItemDto update(Item item, long itemId, long userId) {
+    public ItemDto update(ItemDto itemDto, long itemId, long userId) {
         var updatedItem = checkIfExists(itemStorage.findById(itemId));
         var owner = userService.findById(userId);
         if (updatedItem.getOwner() != null && updatedItem.getOwner().getId() != userId) {
             throw new UserOwnershipException("User with id=" + userId +
                     " is not the owner of the item with id=" + itemId);
         }
-        if (item.getName() != null) {
-            updatedItem.setName(item.getName());
+        if (itemDto.getName() != null) {
+            updatedItem.setName(itemDto.getName());
         }
-        if (item.getDescription() != null) {
-            updatedItem.setDescription(item.getDescription());
+        if (itemDto.getDescription() != null) {
+            updatedItem.setDescription(itemDto.getDescription());
         }
-        if (item.getAvailable() != null) {
-            updatedItem.setAvailable(item.getAvailable());
+        if (itemDto.getAvailable() != null) {
+            updatedItem.setAvailable(itemDto.getAvailable());
         }
         updatedItem.setOwner(owner);
         itemStorage.update(updatedItem);
 
-        return ItemMapper.toItemDto(updatedItem);
+        return toItemDto(updatedItem);
     }
 
     public ItemDto findById(long itemId) {
-        var item = checkIfExists(itemStorage.findById(itemId));
-        return ItemMapper.toItemDto(item);
+        return toItemDto(checkIfExists(itemStorage.findById(itemId)));
     }
 
     public List<ItemDto> findAllByUserId(long userId) {

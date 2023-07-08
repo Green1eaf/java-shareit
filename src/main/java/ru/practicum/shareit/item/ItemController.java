@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,14 +17,14 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto create(@RequestBody @Valid Item item, @RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.create(item, userId);
+    public ItemDto create(@RequestBody @Valid ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.create(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestBody Item item, @PathVariable long itemId,
+    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable long itemId,
                           @RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.update(item, itemId, userId);
+        return itemService.update(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
