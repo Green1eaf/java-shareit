@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.item.ItemMapper.*;
+import static ru.practicum.shareit.user.UserMapper.toUser;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +25,11 @@ public class ItemService {
     private final UserService userService;
 
     public ItemDto create(ItemDto itemDto, long userId) {
-        return toItemDto(itemStorage.create(toItem(itemDto, userService.findById(userId))));
+        return toItemDto(itemStorage.create(toItem(itemDto, toUser(userService.findById(userId)))));
     }
 
     public ItemDto update(ItemDto itemDto, long itemId, long userId) {
         var updatedItem = checkIfExists(itemStorage.findById(itemId));
-        var owner = userService.findById(userId);
         if (updatedItem.getOwner() != null && updatedItem.getOwner().getId() != userId) {
             throw new UserOwnershipException("User with id=" + userId +
                     " is not the owner of the item with id=" + itemId);
@@ -43,7 +43,7 @@ public class ItemService {
         if (itemDto.getAvailable() != null) {
             updatedItem.setAvailable(itemDto.getAvailable());
         }
-        updatedItem.setOwner(owner);
+        updatedItem.setOwner(toUser(userService.findById(userId)));
         itemStorage.update(updatedItem);
 
         return toItemDto(updatedItem);

@@ -1,55 +1,60 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotExistException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserStorage;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.user.UserMapper.*;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserStorage storage;
 
-    public UserService(UserStorage storage) {
-        this.storage = storage;
-    }
-
-    public User create(User user) {
-        if (findByEmail(user.getEmail()).isPresent()) {
-            throw new AlreadyExistsException("User with email:" + user.getEmail() + " already exists");
+    public UserDto create(UserDto userDto) {
+        if (findByEmail(userDto.getEmail()).isPresent()) {
+            throw new AlreadyExistsException("User with email:" + userDto.getEmail() + " already exists");
         }
-        return storage.create(user);
+        return toUserDto(storage.create(toUser(userDto)));
     }
 
-    public User findById(long id) {
+    public UserDto findById(long id) {
         return Optional.ofNullable(storage.findById(id))
+                .map(UserMapper::toUserDto)
                 .orElseThrow(() -> new NotExistException("User with id=" + id + " not exists"));
     }
 
-    public User update(User user, long userId) {
+    public UserDto update(UserDto userDto, long userId) {
         var updatedUser = findById(userId);
-        if (user.getName() != null) {
-            updatedUser.setName(user.getName());
+        if (userDto.getName() != null) {
+            updatedUser.setName(userDto.getName());
         }
-        if (user.getEmail() != null) {
-            checkForDuplicateEmail(user.getEmail(), userId);
-            updatedUser.setEmail(user.getEmail());
+        if (userDto.getEmail() != null) {
+            checkForDuplicateEmail(userDto.getEmail(), userId);
+            updatedUser.setEmail(userDto.getEmail());
         }
-        return storage.update(updatedUser);
+        return toUserDto(storage.update(toUser(updatedUser)));
     }
 
     public void deleteById(long id) {
         storage.deleteById(id);
     }
 
-    public List<User> findAll() {
-        return storage.findAll();
+    public List<UserDto> findAll() {
+        return storage.findAll().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> findByEmail(String email) {
+    public Optional<UserDto> findByEmail(String email) {
         return findAll().stream()
                 .filter(user -> email.equals(user.getEmail()))
                 .findFirst();
