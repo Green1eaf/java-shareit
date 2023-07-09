@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,7 +41,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError badRequestHandle(Exception exception) {
+    public ResponseError badRequestHandle(MethodArgumentNotValidException exception) {
         log.error(exception.getMessage());
         return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
