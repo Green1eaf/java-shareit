@@ -7,14 +7,18 @@ import ru.practicum.shareit.exception.UserOwnershipException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserStorage;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.item.ItemMapper.*;
+import static ru.practicum.shareit.item.ItemMapper.toItem;
+import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 import static ru.practicum.shareit.user.UserMapper.toUser;
 
 @Service
@@ -22,10 +26,10 @@ import static ru.practicum.shareit.user.UserMapper.toUser;
 public class ItemService {
 
     private final ItemStorage itemStorage;
-    private final UserService userService;
+    private final UserStorage userStorage;
 
     public ItemDto create(ItemDto itemDto, long userId) {
-        return toItemDto(itemStorage.create(toItem(itemDto, toUser(userService.findById(userId)))));
+        return toItemDto(itemStorage.create(toItem(itemDto, toUser(checkUserExist(userId)))));
     }
 
     public ItemDto update(ItemDto itemDto, long itemId, long userId) {
@@ -43,7 +47,7 @@ public class ItemService {
         if (itemDto.getAvailable() != null) {
             updatedItem.setAvailable(itemDto.getAvailable());
         }
-        updatedItem.setOwner(toUser(userService.findById(userId)));
+        updatedItem.setOwner(toUser(checkUserExist(userId)));
         itemStorage.update(updatedItem);
 
         return toItemDto(updatedItem);
@@ -76,5 +80,11 @@ public class ItemService {
             throw new NotExistException("Item not exists");
         }
         return obj;
+    }
+
+    private UserDto checkUserExist(long userId) {
+        return Optional.ofNullable(userStorage.findById(userId))
+                .map(UserMapper::toUserDto)
+                .orElseThrow(() -> new NotExistException("User with id=" + userId + " not exists"));
     }
 }
