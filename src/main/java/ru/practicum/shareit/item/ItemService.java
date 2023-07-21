@@ -5,15 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.exception.UserOwnershipException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserStorage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,15 +23,17 @@ import static ru.practicum.shareit.user.UserMapper.toUser;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final ItemStorage itemStorage;
-    private final UserStorage userStorage;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     public ItemDto create(ItemDto itemDto, long userId) {
-        return toItemDto(itemStorage.create(toItem(itemDto, toUser(checkUserExist(userId)))));
+        return toItemDto(itemRepository.save(toItem(itemDto, toUser(checkUserExist(userId)))));
     }
 
     public ItemDto update(ItemDto itemDto, long itemId, long userId) {
-        var updatedItem = checkIfExists(itemStorage.findById(itemId));
+
+        var updatedItem = itemRepository.findById(itemId)
+                .orElseThrow(()-> new NotExistException("Item with id=" +itemId+" not exists"));
         if (updatedItem.getOwner() != null && updatedItem.getOwner().getId() != userId) {
             throw new UserOwnershipException("User with id=" + userId +
                     " is not the owner of the item with id=" + itemId);
@@ -48,17 +48,22 @@ public class ItemService {
             updatedItem.setAvailable(itemDto.getAvailable());
         }
         updatedItem.setOwner(toUser(checkUserExist(userId)));
-        itemStorage.update(updatedItem);
+        itemRepository.save(updatedItem);
 
         return toItemDto(updatedItem);
     }
 
     public ItemDto findById(long itemId) {
-        return toItemDto(checkIfExists(itemStorage.findById(itemId)));
+        return itemRepository.findById(itemId)
+                .map(ItemMapper::toItemDto)
+                .orElseThrow(() -> new NotExistException("Item with id=" + itemId + " not exists"));
     }
 
     public List<ItemDto> findAllByUserId(long userId) {
-        return findAllItemDtoByFilter(item -> item.getOwner() != null && item.getOwner().getId() == userId);
+        return itemRepository.findAllByOwnerId(userId)
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     public List<ItemDto> searchByText(String text) {
@@ -69,21 +74,14 @@ public class ItemService {
     }
 
     private List<ItemDto> findAllItemDtoByFilter(Predicate<Item> filter) {
-        return itemStorage.findAll().stream()
+        return itemRepository.findAll().stream()
                 .filter(filter)
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
-    private <T> T checkIfExists(T obj) {
-        if (obj == null) {
-            throw new NotExistException("Item not exists");
-        }
-        return obj;
-    }
-
     private UserDto checkUserExist(long userId) {
-        return Optional.ofNullable(userStorage.findById(userId))
+        return userRepository.findById(userId)
                 .map(UserMapper::toUserDto)
                 .orElseThrow(() -> new NotExistException("User with id=" + userId + " not exists"));
     }
