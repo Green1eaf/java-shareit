@@ -1,12 +1,15 @@
 package ru.practicum.shareit.item.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.practicum.shareit.AbstractBaseEntity;
+import ru.practicum.shareit.AbstractNamedEntity;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -22,7 +25,7 @@ import java.util.Objects;
 @SuperBuilder
 @Entity
 @Table(name = "items")
-public class Item extends AbstractBaseEntity {
+public class Item extends AbstractNamedEntity {
 
     @Column(name = "description", nullable = false)
     @NotBlank

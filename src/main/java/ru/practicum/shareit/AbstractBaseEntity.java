@@ -2,11 +2,8 @@ package ru.practicum.shareit;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @MappedSuperclass
@@ -23,21 +20,18 @@ public abstract class AbstractBaseEntity implements HasId {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @NotBlank
-    @Size(min = 2, max = 255)
-    @Column(name = "name", nullable = false)
-    protected String name;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+
         AbstractBaseEntity that = (AbstractBaseEntity) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return id != null ? id.hashCode() : 0;
     }
 }

@@ -2,7 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.shareit.AbstractBaseEntity;
+import ru.practicum.shareit.AbstractNamedEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 @SuperBuilder
 @Entity
 @Table(name = "users")
-public class User extends AbstractBaseEntity {
+public class User extends AbstractNamedEntity {
 
     @Column(name = "email", unique = true)
     @Email
