@@ -47,6 +47,20 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError badRequestHandle(NotAvailableException exception) {
+        log.error(exception.getMessage());
+        return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError badRequestHandle(BadRequestException exception) {
+        log.error(exception.getMessage());
+        return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseError internalServerErrorHandle(Throwable exception) {
         log.error(exception.getMessage());
