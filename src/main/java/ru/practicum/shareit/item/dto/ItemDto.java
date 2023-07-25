@@ -27,5 +27,15 @@ public class ItemDto {
     @NotNull
     private Boolean available;
 
+    private NearByBooking lastBooking;
+    private NearByBooking nextBooking;
+
     private Long request;
+
+    @Data
+    @Builder
+    public static class NearByBooking {
+        private Long id;
+        private Long bookerId;
+    }
 }

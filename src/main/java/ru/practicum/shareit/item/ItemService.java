@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.exception.UserOwnershipException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -10,7 +12,9 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -25,6 +29,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     public ItemDto create(ItemDto itemDto, long userId) {
         return toItemDto(itemRepository.save(toItem(itemDto, toUser(checkUserExist(userId)))));
@@ -54,9 +59,28 @@ public class ItemService {
     }
 
     public ItemDto findById(long itemId) {
-        return itemRepository.findById(itemId)
-                .map(ItemMapper::toItemDto)
+        var item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotExistException("Item with id=" + itemId + " not exists"));
+        var bookings = bookingRepository.findAllByItemIdAndItem_OwnerId(itemId, item.getOwner().getId());
+        LocalDateTime now = LocalDateTime.now();
+        var prevBooking = bookings.stream()
+                .filter(b -> b.getEnd().isBefore(now))
+                .max(Comparator.comparing(Booking::getEnd))
+                .orElse(null);
+        var nextBooking = bookings.stream()
+                .filter(b -> b.getStart().isAfter(now))
+                .min(Comparator.comparing(Booking::getStart))
+                .orElse(null);
+        var itemDto = ItemMapper.toItemDto(item);
+        itemDto.setLastBooking(ItemDto.NearByBooking.builder()
+                .id(prevBooking == null ? null : prevBooking.getId())
+                .bookerId(prevBooking == null ? null : prevBooking.getBooker().getId())
+                .build());
+        itemDto.setNextBooking(ItemDto.NearByBooking.builder()
+                .id(nextBooking == null ? null : nextBooking.getId())
+                .bookerId(nextBooking == null ? null : nextBooking.getBooker().getId())
+                .build());
+        return itemDto;
     }
 
     public List<ItemDto> findAllByUserId(long userId) {
