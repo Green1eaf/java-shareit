@@ -33,7 +33,7 @@ public class ItemService {
     public ItemDto update(ItemDto itemDto, long itemId, long userId) {
 
         var updatedItem = itemRepository.findById(itemId)
-                .orElseThrow(()-> new NotExistException("Item with id=" +itemId+" not exists"));
+                .orElseThrow(() -> new NotExistException("Item with id=" + itemId + " not exists"));
         if (updatedItem.getOwner() != null && updatedItem.getOwner().getId() != userId) {
             throw new UserOwnershipException("User with id=" + userId +
                     " is not the owner of the item with id=" + itemId);

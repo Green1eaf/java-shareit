@@ -70,7 +70,7 @@ public class CustomExceptionHandler {
     @Getter
     @RequiredArgsConstructor
     private static class ResponseError {
-        private final String message;
+        private final String error;
         private final HttpStatus status;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
         private final LocalDateTime time = LocalDateTime.now();

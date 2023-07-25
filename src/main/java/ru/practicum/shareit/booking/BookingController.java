@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -28,5 +29,17 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto findById(@PathVariable Long bookingId, @RequestHeader("X-Sharer-User-Id") long userId) {
         return service.findById(bookingId, userId);
+    }
+
+    @GetMapping
+    public List<BookingDto> findAllForCurrentBooker(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                    @RequestParam(required = false) String state) {
+        return service.findByBookerAndState(userId, state);
+    }
+
+    @GetMapping("/owner")
+    public List<BookingDto> findAllItemsForCurrentOwner(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                        @RequestParam(required = false) String state) {
+        return service.findAllItemsByOwnerAndState(userId, state);
     }
 }
