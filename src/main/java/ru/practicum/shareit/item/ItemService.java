@@ -62,20 +62,25 @@ public class ItemService {
         var item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotExistException("Item with id=" + itemId + " not exists"));
         var bookings = bookingRepository.findAllByItemIdAndItem_OwnerId(itemId, item.getOwner().getId());
+
         LocalDateTime now = LocalDateTime.now();
+
         var prevBooking = bookings.stream()
-                .filter(b -> b.getEnd().isBefore(now))
+                .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
                 .max(Comparator.comparing(Booking::getEnd))
                 .orElse(null);
+
         var nextBooking = bookings.stream()
-                .filter(b -> b.getStart().isAfter(now))
+                .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
                 .min(Comparator.comparing(Booking::getStart))
                 .orElse(null);
+
         var itemDto = ItemMapper.toItemDto(item);
         itemDto.setLastBooking(ItemDto.NearByBooking.builder()
                 .id(prevBooking == null ? null : prevBooking.getId())
                 .bookerId(prevBooking == null ? null : prevBooking.getBooker().getId())
                 .build());
+
         itemDto.setNextBooking(ItemDto.NearByBooking.builder()
                 .id(nextBooking == null ? null : nextBooking.getId())
                 .bookerId(nextBooking == null ? null : nextBooking.getBooker().getId())

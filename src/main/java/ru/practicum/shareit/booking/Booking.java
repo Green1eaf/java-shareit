@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
@@ -31,17 +30,15 @@ public class Booking extends AbstractBaseEntity {
     @NotNull
     private LocalDateTime end;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     @NotNull
     private Item item;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     @NotNull
     private User booker;
 
