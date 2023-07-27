@@ -42,8 +42,6 @@ public class Item extends AbstractNamedEntity {
     @JsonIgnore
     private User owner;
 
-    private Long request;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,11 +57,12 @@ public class Item extends AbstractNamedEntity {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "name = " + name + ", " +
-                "description = " + description + ", " +
-                "available = " + available + ", " +
-                "request = " + request + ")";
+        return "Item{" +
+                "description='" + description + '\'' +
+                ", available=" + available +
+                ", owner=" + owner +
+                ", name='" + name + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

@@ -44,5 +44,5 @@ public class Comment extends AbstractBaseEntity {
 
     @Column(name = "start_date")
     @NotNull
-    private LocalDateTime startDate;
+    private LocalDateTime created;
 }

@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.comment.CommentDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,6 +33,8 @@ public class ItemDto {
     private NearByBooking nextBooking;
 
     private Long request;
+
+    private List<CommentDto> comments;
 
     @Data
     @Builder
