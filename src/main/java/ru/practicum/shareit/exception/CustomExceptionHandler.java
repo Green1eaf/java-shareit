@@ -15,47 +15,34 @@ import java.time.LocalDateTime;
 @Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler {
-
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
-    @ExceptionHandler
+    @ExceptionHandler({AlreadyExistsException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseError conflictHandle(AlreadyExistsException exception) {
+    public ResponseError conflictHandle(Exception exception) {
         log.error(exception.getMessage());
         return new ResponseError(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({NotExistException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseError notFoundHandle(NotExistException exception) {
+    public ResponseError notFoundHandle(Exception exception) {
         log.error(exception.getMessage());
         return new ResponseError(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({UserOwnershipException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseError notUserOwnership(UserOwnershipException exception) {
+    public ResponseError notUserOwnership(Exception exception) {
         log.error(exception.getMessage());
         return new ResponseError(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({NotAvailableException.class,
+            BadRequestException.class,
+            MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError badRequestHandle(MethodArgumentNotValidException exception) {
-        log.error(exception.getMessage());
-        return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError badRequestHandle(NotAvailableException exception) {
-        log.error(exception.getMessage());
-        return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError badRequestHandle(BadRequestException exception) {
+    public ResponseError badRequestHandle(Exception exception) {
         log.error(exception.getMessage());
         return new ResponseError(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
