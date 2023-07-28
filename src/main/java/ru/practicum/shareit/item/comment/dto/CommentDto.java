@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.comment;
+package ru.practicum.shareit.item.comment.dto;
 
 import lombok.Builder;
 import lombok.Data;

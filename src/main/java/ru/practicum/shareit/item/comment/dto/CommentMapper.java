@@ -1,6 +1,8 @@
-package ru.practicum.shareit.item.comment;
+package ru.practicum.shareit.item.comment.dto;
 
 import lombok.experimental.UtilityClass;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
+import ru.practicum.shareit.item.comment.model.Comment;
 
 @UtilityClass
 public class CommentMapper {
