@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -32,6 +32,6 @@ public class ItemRequest extends AbstractBaseEntity {
     @NotNull
     private User requestor;
 
-    @Column(name = "start_date")
+    @Column(name = "created")
     private LocalDateTime created;
 }

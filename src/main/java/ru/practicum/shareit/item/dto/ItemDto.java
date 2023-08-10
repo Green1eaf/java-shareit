@@ -32,7 +32,7 @@ public class ItemDto {
     private NearByBooking lastBooking;
     private NearByBooking nextBooking;
 
-    private Long request;
+    private Long requestId;
 
     private List<CommentDto> comments;
 

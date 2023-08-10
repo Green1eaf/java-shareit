@@ -3,17 +3,16 @@ package ru.practicum.shareit.item.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.practicum.shareit.AbstractNamedEntity;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -41,4 +40,10 @@ public class Item extends AbstractNamedEntity {
     @JsonIgnore
     @ToString.Exclude
     private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
+    private ItemRequest request;
 }

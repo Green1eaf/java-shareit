@@ -16,7 +16,6 @@ import ru.practicum.shareit.util.EntityUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -168,10 +167,8 @@ public class UserServiceImpTest {
                 .build();
         var userFromRepository = List.of(userOne, userTwo);
         when(userRepository.findAll()).thenReturn(userFromRepository);
-        var expectedDto = userFromRepository.stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
-        assertArrayEquals(expectedDto.toArray(), userService.findAll().toArray());
+        assertArrayEquals(userFromRepository.stream()
+                .map(UserMapper::toUserDto).toArray(), userService.findAll().toArray());
         verify(userRepository, times(1)).findAll();
     }
 

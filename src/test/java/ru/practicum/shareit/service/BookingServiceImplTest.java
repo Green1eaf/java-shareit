@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
@@ -240,7 +239,7 @@ public class BookingServiceImplTest {
         var booking2 = Booking.builder()
                 .booker(User.builder().id(1L).build())
                 .status(Status.APPROVED)
-                .item(Item.builder().id(1l).build())
+                .item(Item.builder().id(1L).build())
                 .start(LocalDateTime.of(2021, 1, 1, 1, 1))
                 .end(LocalDateTime.of(2021, 1, 2, 1, 1))
                 .build();
@@ -271,7 +270,7 @@ public class BookingServiceImplTest {
         var booking2 = Booking.builder()
                 .booker(User.builder().id(1L).build())
                 .status(Status.APPROVED)
-                .item(Item.builder().id(1l).build())
+                .item(Item.builder().id(1L).build())
                 .start(LocalDateTime.of(2021, 1, 1, 1, 1))
                 .end(LocalDateTime.of(2021, 1, 2, 1, 1))
                 .build();
