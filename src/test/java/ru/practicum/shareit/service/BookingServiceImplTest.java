@@ -252,7 +252,7 @@ public class BookingServiceImplTest {
                 .build();
         when(bookingRepository.findAllByBookerId(anyLong())).thenReturn(List.of(booking1, booking3, booking2));
         var expected = List.of(BookingMapper.toBookingDto(booking2), BookingMapper.toBookingDto(booking1)).toArray();
-        var actual = bookingService.findByBookerAndState(1L, "PAST").toArray();
+        var actual = bookingService.findByBookerAndState(1L, "PAST", 0, 100).toArray();
         assertArrayEquals(expected, actual);
         verify(entityUtils, times(1)).getUserIfExists(anyLong());
         verify(bookingRepository, times(1)).findAllByBookerId(anyLong());
@@ -283,7 +283,7 @@ public class BookingServiceImplTest {
                 .build();
         when(bookingRepository.findAllByItem_OwnerId(anyLong())).thenReturn(List.of(booking1, booking3, booking2));
         var expected = List.of(BookingMapper.toBookingDto(booking2), BookingMapper.toBookingDto(booking1)).toArray();
-        var actual = bookingService.findAllItemsByOwnerAndState(1L, "PAST").toArray();
+        var actual = bookingService.findAllItemsByOwnerAndState(1L, "PAST", 0, 100).toArray();
         assertArrayEquals(expected, actual);
         verify(entityUtils, times(1)).getUserIfExists(anyLong());
         verify(bookingRepository, times(1)).findAllByItem_OwnerId(anyLong());

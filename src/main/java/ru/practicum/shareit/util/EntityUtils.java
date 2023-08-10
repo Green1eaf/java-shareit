@@ -40,7 +40,8 @@ public class EntityUtils {
         STATE_FILTER.put(State.REJECTED, b -> b.getStatus().equals(Status.REJECTED));
     }
 
-    public static Predicate<Booking> stateBy(State state) {
+    public static Predicate<Booking>
+    stateBy(State state) {
         return STATE_FILTER.get(state);
     }
 

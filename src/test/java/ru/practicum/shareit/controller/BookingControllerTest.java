@@ -105,7 +105,7 @@ public class BookingControllerTest {
 
     @Test
     public void findAllForBooker() throws Exception {
-        when(bookingService.findByBookerAndState(anyLong(), anyString())).thenReturn(List.of(bookingDto));
+        when(bookingService.findByBookerAndState(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", 1L)
@@ -121,7 +121,7 @@ public class BookingControllerTest {
 
     @Test
     public void findAllItemsForOwner() throws Exception {
-        when(bookingService.findAllItemsByOwnerAndState(anyLong(), anyString())).thenReturn(List.of(bookingDto));
+        when(bookingService.findAllItemsByOwnerAndState(anyLong(), anyString(), anyInt(), anyInt())).thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", 1L)

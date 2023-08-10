@@ -40,15 +40,19 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> findAllForBooker(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @RequestParam(required = false) String state) {
+                                             @RequestParam(required = false, defaultValue = "ALL") String state,
+                                             @RequestParam(value = "from", required = false, defaultValue = "0") int from,
+                                             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         log.info("GET: find all bookings for booker with id={} and state: {}", userId, state);
-        return service.findByBookerAndState(userId, state);
+        return service.findByBookerAndState(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findAllItemsForOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                 @RequestParam(required = false) String state) {
+                                                 @RequestParam(required = false, defaultValue = "ALL") String state,
+                                                 @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
+                                                 @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         log.info("GET/owner: find all bookings for item's owner with id={} and state{}", userId, state);
-        return service.findAllItemsByOwnerAndState(userId, state);
+        return service.findAllItemsByOwnerAndState(userId, state, from, size);
     }
 }

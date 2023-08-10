@@ -94,18 +94,18 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> findByBookerAndState(long userId, String state) {
+    public List<BookingDto> findByBookerAndState(long userId, String state, int from, int size) {
         utils.getUserIfExists(userId);
         log.info("Get all bookings for booker with id={} and with state: {}", userId, state);
-        return findAllByState(bookingRepository.findAllByBookerId(userId), state);
+        return pagination(from, size, findAllByState(bookingRepository.findAllByBookerId(userId), state));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> findAllItemsByOwnerAndState(long userId, String state) {
+    public List<BookingDto> findAllItemsByOwnerAndState(long userId, String state, int from, int size) {
         utils.getUserIfExists(userId);
         log.info("Get all bookings for owner with id={} and with state: {}", userId, state);
-        return findAllByState(bookingRepository.findAllByItem_OwnerId(userId), state);
+        return pagination(from, size, findAllByState(bookingRepository.findAllByItem_OwnerId(userId), state));
     }
 
     private List<BookingDto> findAllByState(List<Booking> bookings, String state) {
@@ -113,6 +113,16 @@ public class BookingServiceImpl implements BookingService {
                 .filter(stateBy(parseState(state)))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::toBookingDto)
+                .collect(Collectors.toList());
+    }
+
+    private List<BookingDto> pagination(int from, int size, List<BookingDto> list) {
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Bad params from or size for request");
+        }
+        return list.stream()
+                .skip(from)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 
