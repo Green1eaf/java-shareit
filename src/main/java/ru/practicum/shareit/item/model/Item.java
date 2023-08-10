@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
@@ -20,6 +17,8 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -40,29 +39,6 @@ public class Item extends AbstractNamedEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @JsonIgnore
+    @ToString.Exclude
     private User owner;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Item item = (Item) o;
-        return getId() != null && Objects.equals(getId(), item.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Item{" +
-                "description='" + description + '\'' +
-                ", available=" + available +
-                ", owner=" + owner +
-                ", name='" + name + '\'' +
-                ", id=" + id +
-                '}';
-    }
 }
