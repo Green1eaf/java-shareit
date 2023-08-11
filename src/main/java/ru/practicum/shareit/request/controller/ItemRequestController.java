@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
+import ru.practicum.shareit.request.service.ItemRequestService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestController {
 
-    private final ItemRequestServiceImpl service;
+    private final ItemRequestService service;
 
     @PostMapping
     public ItemRequestDto create(@RequestHeader("X-Sharer-User-Id") long userId,

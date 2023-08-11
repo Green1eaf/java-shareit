@@ -9,6 +9,8 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -23,6 +25,7 @@ public class EntityUtils {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
+    private final RequestRepository requestRepository;
 
     /**
      * Фильтр для определения статуса бронирования
@@ -62,5 +65,10 @@ public class EntityUtils {
     public Booking getBookingIfExists(long bookingId) {
         return bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotExistException("Booking with id=" + bookingId + " not exists"));
+    }
+
+    public ItemRequest getItemRequestIfExists(long id) {
+        return requestRepository.findById(id)
+                .orElseThrow(() -> new NotExistException("Request with id=" + id + " not exists"));
     }
 }

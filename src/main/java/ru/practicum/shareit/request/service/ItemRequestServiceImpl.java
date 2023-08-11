@@ -3,7 +3,6 @@ package ru.practicum.shareit.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotExistException;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -16,11 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ItemRequestServiceImpl {
+public class ItemRequestServiceImpl implements ItemRequestService {
     private final RequestRepository requestRepository;
     private final EntityUtils entityUtils;
     private final ItemRepository itemRepository;
 
+    @Override
     public ItemRequestDto create(ItemRequestDto itemRequestDto, long userId) {
         var user = entityUtils.getUserIfExists(userId);
 
@@ -30,6 +30,7 @@ public class ItemRequestServiceImpl {
         return ItemRequestMapper.toItemRequestDto(itemFromRepo, null);
     }
 
+    @Override
     public List<ItemRequestDto> findAllByUser(long userId) {
         entityUtils.getUserIfExists(userId);
         return requestRepository.findAllByRequestorId(userId).stream()
@@ -40,11 +41,11 @@ public class ItemRequestServiceImpl {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public ItemRequestDto findById(long id, long userId) {
         entityUtils.getUserIfExists(userId);
 
-        var itemRequest = requestRepository.findById(id)
-                .orElseThrow(() -> new NotExistException("Request with id=" + id + " not exists"));
+        var itemRequest = entityUtils.getItemRequestIfExists(id);
 
         var items = itemRepository.findAllByRequestId(id).stream()
                 .map(ItemMapper::toItemDto)
@@ -52,6 +53,7 @@ public class ItemRequestServiceImpl {
         return ItemRequestMapper.toItemRequestDto(itemRequest, items);
     }
 
+    @Override
     public List<ItemRequestDto> findAllByParams(long userId, Pageable pageable) {
         return requestRepository.findAllByRequestorIdNot(userId, pageable).stream()
                 .map(itemRequest -> ItemRequestMapper.toItemRequestDto(itemRequest,
