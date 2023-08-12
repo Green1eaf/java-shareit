@@ -15,29 +15,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestController {
 
-    private static final String USER = "X-Sharer-User-Id";
+    private static final String USER_ID = "X-Sharer-User-Id";
 
     private final ItemRequestService service;
 
     @PostMapping
-    public ItemRequestDto create(@RequestHeader(USER) long userId,
+    public ItemRequestDto create(@RequestHeader(USER_ID) long userId,
                                  @RequestBody @Valid ItemRequestDto itemRequestDto) {
         return service.create(itemRequestDto, userId);
     }
 
     @GetMapping
-    public List<ItemRequestDto> findAllByUser(@RequestHeader(USER) long userId) {
+    public List<ItemRequestDto> findAllByUser(@RequestHeader(USER_ID) long userId) {
         return service.findAllByUser(userId);
     }
 
     @GetMapping("/{id}")
-    public ItemRequestDto findById(@RequestHeader(USER) long userId,
+    public ItemRequestDto findById(@RequestHeader(USER_ID) long userId,
                                    @PathVariable long id) {
         return service.findById(id, userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> findAllByParams(@RequestHeader(USER) long userId,
+    public List<ItemRequestDto> findAllByParams(@RequestHeader(USER_ID) long userId,
                                         @RequestParam(value = "from", required = false, defaultValue = "0") int from,
                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         return service.findAllByParams(userId, PageRequest.of(from, size, Sort.by("created").descending()));
