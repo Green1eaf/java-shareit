@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ru.practicum.shareit.util.EntityUtils.stateBy;
 
@@ -93,25 +94,35 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> findByBookerAndState(long userId, String state) {
+    public List<BookingDto> findByBookerAndState(long userId, String state, int from, int size) {
         utils.getUserIfExists(userId);
         log.info("Get all bookings for booker with id={} and with state: {}", userId, state);
-        return bookingRepository.findAllByBookerId(userId).stream()
+        return pagination(from, size, findAllByState(bookingRepository.findAllByBookerId(userId), state));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookingDto> findAllItemsByOwnerAndState(long userId, String state, int from, int size) {
+        utils.getUserIfExists(userId);
+        log.info("Get all bookings for owner with id={} and with state: {}", userId, state);
+        return pagination(from, size, findAllByState(bookingRepository.findAllByItem_OwnerId(userId), state));
+    }
+
+    private List<BookingDto> findAllByState(List<Booking> bookings, String state) {
+        return bookings.stream()
                 .filter(stateBy(parseState(state)))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BookingDto> findAllItemsByOwnerAndState(long userId, String state) {
-        utils.getUserIfExists(userId);
-        log.info("Get all bookings for owner with id={} and with state: {}", userId, state);
-        return bookingRepository.findAllByItem_OwnerId(userId).stream()
-                .filter(stateBy(parseState(state)))
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .map(BookingMapper::toBookingDto)
+    private List<BookingDto> pagination(int from, int size, List<BookingDto> list) {
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Bad params from or size for request");
+        }
+        return list.stream()
+                .skip(from)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 
@@ -119,16 +130,13 @@ public class BookingServiceImpl implements BookingService {
      * Метод парсит String в State
      */
     private static State parseState(String state) {
-        State bookingState;
         if (state == null || state.isBlank()) {
-            bookingState = State.ALL;
-        } else {
-            try {
-                bookingState = State.valueOf(state);
-            } catch (IllegalArgumentException e) {
-                throw new BadRequestException("Unknown state: " + state);
-            }
+            return State.ALL;
         }
-        return bookingState;
+        if (Stream.of(State.values()).anyMatch(s -> s.name().equals(state))) {
+            return State.valueOf(state);
+        } else {
+            throw new BadRequestException("Unknown state: " + state);
+        }
     }
 }

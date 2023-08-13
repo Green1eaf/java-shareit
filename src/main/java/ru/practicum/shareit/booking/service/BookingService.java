@@ -16,8 +16,8 @@ public interface BookingService {
     BookingDto findById(Long bookingId, Long userId);
 
     @Transactional(readOnly = true)
-    List<BookingDto> findByBookerAndState(long userId, String state);
+    List<BookingDto> findByBookerAndState(long userId, String state, int from, int size);
 
     @Transactional(readOnly = true)
-    List<BookingDto> findAllItemsByOwnerAndState(long userId, String state);
+    List<BookingDto> findAllItemsByOwnerAndState(long userId, String state, int from, int size);
 }
