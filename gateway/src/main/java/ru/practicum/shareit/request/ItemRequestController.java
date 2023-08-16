@@ -7,6 +7,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/requests")
 @Slf4j
@@ -20,7 +22,7 @@ public class ItemRequestController {
     @ResponseBody
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader(USER_ID) long userId,
-                                         @RequestBody ItemRequestDto itemRequestDto) {
+                                         @RequestBody @Valid ItemRequestDto itemRequestDto) {
         return itemRequestClient.create(userId, itemRequestDto);
     }
 

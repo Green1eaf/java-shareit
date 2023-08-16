@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,9 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingDto {
     private Long itemDto;
-    @FutureOrPresent
-    private LocalDateTime start;
     @Future
+    private LocalDateTime start;
     private LocalDateTime end;
     private Long bookerId;
+    private Long itemId;
 }

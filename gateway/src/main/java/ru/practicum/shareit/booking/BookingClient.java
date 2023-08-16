@@ -29,7 +29,7 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateStatus(Long userId, Long bookingId, Boolean approved) {
-        return patch("/" + bookingId + "?approved=" + approved, userId);
+        return patch("/" + bookingId + "?approved=" + approved, userId, null, null);
     }
 
     public ResponseEntity<Object> findById(Long bookingId, long userId) {
